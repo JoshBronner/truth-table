@@ -1,10 +1,5 @@
 from itertools import product
 
-# cool
-
-# Working towards:
-# (¬(A^B)) -> ¬A^¬B
-
 class TruthTable():
     
     def __init__(self, input_statement:str):
@@ -21,24 +16,33 @@ class TruthTable():
         self._table = []
         self._parse_input()
         
-    def _parse_input(self):
-        for i, char in enumerate(self._input_statement):
-            if char.isupper() and not char in self._atoms:
-                self._atoms.append(char)
-            
-            if char in self._SYMBOLS:
-                self._statements.append([char, self._input_statement[i-1], self._input_statement[i+1]])
+    def _parse_input(self):   
+        self._extract_atoms()
+        self._extract_conditions()
+        self._generate_atomic_combinations()
+        self._generate_statements()
 
-        combinations = list(product('TF', repeat=len(self._atoms)))
-        self._atomic_truths = [dict(zip(self._atoms, combination)) for combination in combinations]
-
-        self._table = self._atomic_truths
-
+    def _generate_statements(self):
         for char in self._statements:
             if char[0] in self._SYMBOLS:
                 if char[1] in self._table[0] and char[2] in self._table[0]:
-                    self._SYMBOLS[char[0]](char[1], char[2])
+                    self._SYMBOLS[char[0]](char[1], char[2]) 
 
+    def _extract_atoms(self):
+            for char in self._input_statement:
+                if char.isupper() and not char in self._atoms:
+                    self._atoms.append(char)
+    
+    def _extract_conditions(self):
+        for i, char in enumerate(self._input_statement):
+            if char in self._SYMBOLS:
+                self._statements.append([char, self._input_statement[i-1], self._input_statement[i+1]])
+
+    def _generate_atomic_combinations(self):
+        combinations = list(product('TF', repeat=len(self._atoms)))
+        self._atomic_truths = [dict(zip(self._atoms, combination)) for combination in combinations]
+        self._table = self._atomic_truths
+    
     def get_table(self):
         return self._table
     
