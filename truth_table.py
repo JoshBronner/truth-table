@@ -8,7 +8,12 @@ from itertools import product
 class TruthTable():
     
     def __init__(self, input_statement:str):
-        self._SYMBOLS = {'v': self._eval_or}
+        self._SYMBOLS = {'v': self._eval_or,
+                         '^': self._eval_and,
+                         '¬': self._eval_nor,
+                         '⇒': self._eval_implies,
+                         '⇔': self._eval_biconditional}
+        
         self._input_statement = input_statement
         self._atoms = []
         self._statements = []
@@ -34,7 +39,6 @@ class TruthTable():
                 if char[1] in self._table[0] and char[2] in self._table[0]:
                     self._SYMBOLS[char[0]](char[1], char[2])
 
-
     def get_table(self):
         return self._table
     
@@ -45,4 +49,32 @@ class TruthTable():
             else:
                 combination[f'{left}v{right}'] = 'F'
     
-print(TruthTable("AvB").get_table())
+    def _eval_and(self, left:str, right:str):
+        for combination in self._table:
+            if combination[left] == 'T' and combination[right] == 'T':
+                combination[f'{left}^{right}'] = 'T'
+            else:
+                combination[f'{left}^{right}'] = 'F'
+
+    def _eval_nor(self, left:str, right:str):
+        for combination in self._table:
+            if combination[right] == 'T':
+                combination[f'¬{right}'] = 'F'
+            else:
+                combination[f'¬{right}'] = 'T'
+
+    def _eval_implies(self, left:str, right:str):
+        for combination in self._table:
+            if combination[left] == 'F':
+                combination[f'{left}⇒{right}'] = 'T'
+            elif combination[left] == 'T' and combination[right] =='T':
+                combination[f'{left}⇒{right}'] = 'T'
+            else:
+                combination[f'{left}⇒{right}'] = 'F'
+    
+    def _eval_biconditional(self, left:str, right:str):
+        for combination in self._table:
+            if combination[left] == combination[right]:
+                combination[f'{left}⇔{right}'] = 'T'
+            else:
+                combination[f'{left}⇔{right}'] = 'F'
