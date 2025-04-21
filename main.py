@@ -1,4 +1,4 @@
-from truth_table import truth_table
+from truth_table import TruthTable
 
 # Working towards:
 # (¬(A^B)) -> ¬A^¬B
@@ -7,4 +7,4 @@ from truth_table import truth_table
 
 if __name__ == "__main__":
     print('check')
-    print(truth_table("¬(AvB) ^ ¬B"))
+    print(TruthTable("¬(AvB) ^ ¬B").getTable())

@@ -1,8 +1,8 @@
-from truth_table import truth_table
+from truth_table import TruthTable
 
 # Test "A"
 def test_A():
-    assert truth_table("A") == [{'A': 'T'}, {'A': 'F'}]
+    assert TruthTable("A").getTable() == [{'A': 'T'}, {'A': 'F'}]
 
 # Test "AvB"
 # def test_AvB():

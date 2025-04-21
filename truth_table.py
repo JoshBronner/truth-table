@@ -5,22 +5,22 @@ from itertools import product
 # Working towards:
 # (¬(A^B)) -> ¬A^¬B
 
-
-
-def truth_table(input_statement:str):
-    atoms = []
-    statement = []
-    
-    for i, char in enumerate(input_statement):
-        if char.isupper() and not char in atoms:
-            atoms.append(char)
+class TruthTable():
+    def __init__(self, input_statement:str):
+        self.atoms = []
+        statements = []
         
-        if char == 'v':
-            statement.append(['v', input_statement[i-1], input_statement[i+1]])
+        for i, char in enumerate(input_statement):
+            if char.isupper() and not char in self.atoms:
+                self.atoms.append(char)
+            
+            if char == 'v':
+                statements.append(['v', input_statement[i-1], input_statement[i+1]])
 
-    combinations = list(product('TF', repeat=len(atoms)))
-    atomic_truths = [dict(zip(atoms, combination)) for combination in combinations]
+        combinations = list(product('TF', repeat=len(self.atoms)))
+        atomic_truths = [dict(zip(self.atoms, combination)) for combination in combinations]
 
-    table = atomic_truths
+        self.table = atomic_truths
 
-    return table
+    def getTable(self):
+        return self.table
