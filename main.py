@@ -7,4 +7,4 @@ from truth_table import TruthTable
 
 if __name__ == "__main__":
     print('check')
-    print(TruthTable("¬(AvB) ^ ¬B").getTable())
+    print(TruthTable("¬(AvB) ^ ¬B").get_table())
