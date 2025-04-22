@@ -9,43 +9,55 @@ class TruthTable():
                          '⇒': self._eval_implies,
                          '⇔': self._eval_biconditional}
         
-        self._input_statement = input_statement
         self._atoms = []
+        self._input_statement = self._tokenize_statement(input_statement)
         self._statements = []
-        self._atomic_truths = []
-        self._table = []
+        self._table = self._generate_atomic_combinations()
         self._parse_input()
         
-    def _parse_input(self):   
-        self._extract_atoms()
+    # Unclear
+    def _parse_input(self):  
         self._extract_conditions()
-        self._generate_atomic_combinations()
         self._generate_statements()
 
-    def _generate_statements(self):
-        for char in self._statements:
-            if char[0] in self._SYMBOLS:
-                if char[1] in self._table[0] and char[2] in self._table[0]:
-                    self._evaluate_statement(char[0], char[1], char[2])
-
-    def _extract_atoms(self):
-            for char in self._input_statement:
-                if char.isupper() and not char in self._atoms:
+    # Takes original user statement, creates list of tokens as dicts
+    def _tokenize_statement(self, original_statement): 
+        new_statement = []
+        for i, char in enumerate(original_statement):
+            if char in self._SYMBOLS:
+                new_statement.append({'type':'SYMBOL','value':char, 'position':i})
+            elif char.isalpha():
+                new_statement.append({'type':'ATOM', 'value':char, 'position':i})
+                if char not in self._atoms:
                     self._atoms.append(char)
-    
+            elif char == '(':
+                new_statement.append({'type':'LEFT_PAREN', 'value':char, 'position':i})
+            elif char == ')':
+                new_statement.append({'type':'RIGHT_PAREN', 'value':char, 'position':i})
+        return new_statement
+
+    # Populates self._statements
     def _extract_conditions(self):
         for i, char in enumerate(self._input_statement):
-            if char in self._SYMBOLS:
-                self._statements.append([char, self._input_statement[i-1], self._input_statement[i+1]])
+            if char['type'] == 'SYMBOL':
+                self._statements.append([char['value'], self._input_statement[i-1]['value'], self._input_statement[i+1]['value']])
 
+    # Creates True/False table for atoms
     def _generate_atomic_combinations(self):
         combinations = list(product([True, False], repeat=len(self._atoms)))
-        self._atomic_truths = [dict(zip(self._atoms, combination)) for combination in combinations]
-        self._table = self._atomic_truths
+        _atomic_truths = [dict(zip(self._atoms, combination)) for combination in combinations]
+        return _atomic_truths
     
+    # Evaluates each statement in self._statements
+    def _generate_statements(self):
+        for char in self._statements:
+            self._evaluate_statement(char[0], char[1], char[2])
+    
+    # Returns unformatted table. Primarily for testing.
     def get_table(self):
         return self._table
     
+    # Evaluates statements
     def _evaluate_statement(self, operator:str, left:str, right:str):
         for combination in self._table:
             if self._SYMBOLS[operator] == self._eval_not:
@@ -56,14 +68,10 @@ class TruthTable():
                 combination[f'{left}{operator}{right}'] = False
 
     def _eval_or(self, left:str, right:str):
-        if left == True or right == True:
-            return True
-        return False
+        return left or right
     
     def _eval_and(self, left:str, right:str):
-        if left == True and right == True:
-            return True
-        return False
+        return left and right
 
     def _eval_not(self, left:str, right:str):
         return not right
@@ -77,3 +85,5 @@ class TruthTable():
         if left == right:
             return True
         return False
+    
+print(TruthTable("QvU").get_table())
