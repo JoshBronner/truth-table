@@ -5,7 +5,7 @@ class TruthTable():
     def __init__(self, input_statement:str):
         self._SYMBOLS = {'v': self._eval_or,
                          '^': self._eval_and,
-                         '¬': self._eval_nor,
+                         '¬': self._eval_not,
                          '⇒': self._eval_implies,
                          '⇔': self._eval_biconditional}
         
@@ -26,7 +26,7 @@ class TruthTable():
         for char in self._statements:
             if char[0] in self._SYMBOLS:
                 if char[1] in self._table[0] and char[2] in self._table[0]:
-                    self._SYMBOLS[char[0]](char[1], char[2]) 
+                    self._evaluate_statement(char[0], char[1], char[2])
 
     def _extract_atoms(self):
             for char in self._input_statement:
@@ -39,46 +39,41 @@ class TruthTable():
                 self._statements.append([char, self._input_statement[i-1], self._input_statement[i+1]])
 
     def _generate_atomic_combinations(self):
-        combinations = list(product('TF', repeat=len(self._atoms)))
+        combinations = list(product([True, False], repeat=len(self._atoms)))
         self._atomic_truths = [dict(zip(self._atoms, combination)) for combination in combinations]
         self._table = self._atomic_truths
     
     def get_table(self):
         return self._table
     
-    def _eval_or(self, left:str, right:str):
+    def _evaluate_statement(self, operator:str, left:str, right:str):
         for combination in self._table:
-            if combination[left] == 'T' or combination[right] == 'T':
-                combination[f'{left}v{right}'] = 'T'
+            if self._SYMBOLS[operator] == self._eval_not:
+                combination[f'{operator}{right}'] = True if combination[right] == False else False
+            elif self._SYMBOLS[operator](combination[left], combination[right]):
+                combination[f'{left}{operator}{right}'] = True
             else:
-                combination[f'{left}v{right}'] = 'F'
+                combination[f'{left}{operator}{right}'] = False
+
+    def _eval_or(self, left:str, right:str):
+        if left == True or right == True:
+            return True
+        return False
     
     def _eval_and(self, left:str, right:str):
-        for combination in self._table:
-            if combination[left] == 'T' and combination[right] == 'T':
-                combination[f'{left}^{right}'] = 'T'
-            else:
-                combination[f'{left}^{right}'] = 'F'
+        if left == True and right == True:
+            return True
+        return False
 
-    def _eval_nor(self, left:str, right:str):
-        for combination in self._table:
-            if combination[right] == 'T':
-                combination[f'¬{right}'] = 'F'
-            else:
-                combination[f'¬{right}'] = 'T'
+    def _eval_not(self, left:str, right:str):
+        return not right
 
     def _eval_implies(self, left:str, right:str):
-        for combination in self._table:
-            if combination[left] == 'F':
-                combination[f'{left}⇒{right}'] = 'T'
-            elif combination[left] == 'T' and combination[right] =='T':
-                combination[f'{left}⇒{right}'] = 'T'
-            else:
-                combination[f'{left}⇒{right}'] = 'F'
+        if left == False or right == True:
+            return True
+        return False
     
     def _eval_biconditional(self, left:str, right:str):
-        for combination in self._table:
-            if combination[left] == combination[right]:
-                combination[f'{left}⇔{right}'] = 'T'
-            else:
-                combination[f'{left}⇔{right}'] = 'F'
+        if left == right:
+            return True
+        return False
