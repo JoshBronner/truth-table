@@ -1,89 +1,75 @@
 from itertools import product
+from typing import List
+from expressions import *
+from tokens import *
 
-class TruthTable():
-    
+class TruthTable:
     def __init__(self, input_statement:str):
-        self._SYMBOLS = {'v': self._eval_or,
-                         '^': self._eval_and,
-                         '¬': self._eval_not,
-                         '⇒': self._eval_implies,
-                         '⇔': self._eval_biconditional}
-        
-        self._atoms = []
-        self._input_statement = self._tokenize_statement(input_statement)
-        self._statements = []
-        self._table = self._generate_atomic_combinations()
-        self._parse_input()
-        
-    # Unclear
-    def _parse_input(self):  
-        self._extract_conditions()
-        self._generate_statements()
+        self._statement:List[Token|Subexpression] = self._tokenize(input_statement)
+        self._table = self._create_table(self._statement)
 
-    # Takes original user statement, creates list of tokens as dicts
-    def _tokenize_statement(self, original_statement): 
-        new_statement = []
-        for i, char in enumerate(original_statement):
-            if char in self._SYMBOLS:
-                new_statement.append({'type':'SYMBOL','value':char, 'position':i})
+    # FIXME Either values must be set to functions reference or dict must be changed to list (or removed entirely)
+    _UNARY_OPERATORS = {
+        '¬': Not
+    }
+
+    # FIXME Either values must be set to functions reference or dict must be changed to list (or removed entirely)
+    _BINARY_OPERATORS = {
+        'v': Disjunction,
+        '^': Conjunction,
+        '⇒': Implies,
+        '⇔': Biconditional
+    }
+    
+    # Takes in String statement, returns tokenized statement in list of dictionaries. Sublists are parenthesis
+    def _tokenize(self, statement:str) -> List[Token|Subexpression]:
+        tokens:List[Token] = []
+        stack:List[List[Token]] = []
+
+        for i, char in enumerate(statement):
+            if char in self._UNARY_OPERATORS:
+                tokens.append(Token(TokenType.UNARY, char, i))
+            elif char in self._BINARY_OPERATORS:
+                tokens.append(Token(TokenType.BINARY, char, i))
             elif char.isalpha():
-                new_statement.append({'type':'ATOM', 'value':char, 'position':i})
-                if char not in self._atoms:
-                    self._atoms.append(char)
+                tokens.append(Token(TokenType.ATOM, char, i))
             elif char == '(':
-                new_statement.append({'type':'LEFT_PAREN', 'value':char, 'position':i})
+                stack.append((tokens, i))
+                tokens = []
             elif char == ')':
-                new_statement.append({'type':'RIGHT_PAREN', 'value':char, 'position':i})
-        return new_statement
+                previous_tokens, position = stack.pop()
+                subexpression = Subexpression(tokens, position)
+                tokens = previous_tokens
+                tokens.append(subexpression)
 
-    # Populates self._statements
-    def _extract_conditions(self):
-        for i, char in enumerate(self._input_statement):
-            if char['type'] == 'SYMBOL':
-                self._statements.append([char['value'], self._input_statement[i-1]['value'], self._input_statement[i+1]['value']])
+        return tokens
 
-    # Creates True/False table for atoms
-    def _generate_atomic_combinations(self):
-        combinations = list(product([True, False], repeat=len(self._atoms)))
-        _atomic_truths = [dict(zip(self._atoms, combination)) for combination in combinations]
-        return _atomic_truths
-    
-    # Evaluates each statement in self._statements
-    def _generate_statements(self):
-        for char in self._statements:
-            self._evaluate_statement(char[0], char[1], char[2])
-    
-    # Returns unformatted table. Primarily for testing.
-    def get_table(self):
-        return self._table
-    
-    # Evaluates statements
-    def _evaluate_statement(self, operator:str, left:str, right:str):
-        for combination in self._table:
-            if self._SYMBOLS[operator] == self._eval_not:
-                combination[f'{operator}{right}'] = True if combination[right] == False else False
-            elif self._SYMBOLS[operator](combination[left], combination[right]):
-                combination[f'{left}{operator}{right}'] = True
-            else:
-                combination[f'{left}{operator}{right}'] = False
+    # Takes in list of tokens (parsed statement), returns statement table
+    # FIXME refactor
+    def _create_table(self, tokens:List[Token|Subexpression]) -> List[dict[str:bool]]:
+        truths:List[dict] = []
 
-    def _eval_or(self, left:str, right:str):
-        return left or right
+        
+        truths.extend(self._extract_atoms(tokens))
     
-    def _eval_and(self, left:str, right:str):
-        return left and right
+    # Takes in list of tokens, returns all possible combinations of atomic truths in list of dicts
+    def _extract_atoms(self, tokens:List[Token], atoms:List[str]=[]) -> List[dict]:
+        for token in tokens:
+            if token.type == TokenType.ATOM and token.value not in atoms:
+                atoms.append(token.value)
+            elif token.type == 'SUBEXPRESSION':
+                self._extract_atoms(token.value, atoms)
+        combinations = list(product([True, False], repeat=len(atoms)))
+        atomic_truths = [dict(zip(atoms, combination)) for combination in combinations]
+        return atomic_truths
 
-    def _eval_not(self, left:str, right:str):
-        return not right
+    # Takes in a list of tokens, returns a list of expressions (dicts)
+    # FIXME add functionality
+    def _parse_expression(self, tokens:List[Token|Subexpression]) -> Expression:
+        pass
 
-    def _eval_implies(self, left:str, right:str):
-        if left == False or right == True:
-            return True
-        return False
-    
-    def _eval_biconditional(self, left:str, right:str):
-        if left == right:
-            return True
-        return False
-    
-print(TruthTable("QvU").get_table())
+    # Returns truth table
+    # FIXME add functionality
+    def get_table(self) -> List[dict[str:bool]]:
+        pass 
+
