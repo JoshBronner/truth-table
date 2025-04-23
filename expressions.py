@@ -1,5 +1,3 @@
-from typing import List
-
 # Abstract base class
 class Expression:
     def evaluate(self, assignment) -> bool:
@@ -20,10 +18,10 @@ class Atom(Expression):
         return assignment[self.name]
     
 class Not(Expression):
-    def __init__(self, expr:Expression):
-        self.expr = expr
+    def __init__(self, right:Expression):
+        self.right = right
     def evaluate(self, assignment) -> bool:
-        return not self.expr.evaluate(assignment)
+        return not self.right.evaluate(assignment)
     
 class Conjunction(BinaryOperator):
     def __init__(self, left, right):
