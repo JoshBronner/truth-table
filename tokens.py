@@ -16,10 +16,9 @@ class Token:
     def __repr__(self):
         return f"{self.type} TOKEN: {self.value} at position {self.position}"
 
-class Subexpression:
+class Subexpression(Token):
     def __init__(self, value:List[Token], position:int):
-        self.value = value
-        self.position = position
+        super().__init__(TokenType.SUBEXPRESSION, type, position)
 
     def __repr__(self):
-        return f"SUBEXPRESSION - {self.value}, {self.position}"
+        return super().__repr__()
