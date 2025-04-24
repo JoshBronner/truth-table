@@ -3,9 +3,13 @@ from typing import List
 
 class TokenType(Enum):
     ATOM = auto()
-    UNARY = auto()
-    BINARY = auto()
     SUBEXPRESSION = auto()
+
+    NOT = auto()
+    BICONDITIONAL = auto()
+    IMPLIES = auto()
+    CONJUNCTION = auto()
+    DISJUNCTION = auto()
 
 class Token:
     def __init__(self, type:TokenType, value:str, position:int):
@@ -18,7 +22,7 @@ class Token:
 
 class Subexpression(Token):
     def __init__(self, value:List[Token], position:int):
-        super().__init__(TokenType.SUBEXPRESSION, type, position)
+        super().__init__(TokenType.SUBEXPRESSION, value, position)
 
     def __repr__(self):
         return super().__repr__()
