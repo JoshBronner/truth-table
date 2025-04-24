@@ -23,7 +23,6 @@ class ExpressionParser:
     def parse_expression(self) -> Expression:
         return self._parse_biconditional()
 
-
     # Biconditional parser, for recursive descent. 
     def _parse_biconditional(self) -> Expression:
         expr = self._parse_implies()
