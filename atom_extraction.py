@@ -8,14 +8,14 @@ def extract_atoms(expression:Expression) -> List[dict]:
 
     def _check_node(expression:Expression) -> None:
         if isinstance(expression, Atom):
-            atoms.add(expression)
-        elif isinstance(BinaryOperator):
+            atoms.add(expression.name)
+        elif isinstance(expression, BinaryOperator):
             _check_node(expression.left)
             _check_node(expression.right)
-        elif isinstance(Not):
+        elif isinstance(expression, Not):
             _check_node(expression.right)
         else:
             raise TypeError("Expression type not recognized")
         
     _check_node(expression)
-    return sorted(atoms)
+    return atoms
