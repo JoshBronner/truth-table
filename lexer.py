@@ -15,23 +15,25 @@ _BINARY_OPERATORS = {
 
 # Takes string, returns list of Tokens. It lexers.
 def lexer(statement:str) -> List[Token|Subexpression]:
-    tokens:List[Token] = []
-    stack:List[List[Token]] = []
+    stack: List[List[Token|Subexpression]] = [[]]
 
     for i, char in enumerate(statement):
         if char in _UNARY_OPERATORS:
-            tokens.append(Token(_UNARY_OPERATORS[char], char, i))
+            stack[-1].append(Token(_UNARY_OPERATORS[char], char, i))
         elif char in _BINARY_OPERATORS:
-            tokens.append(Token(_BINARY_OPERATORS[char], char, i))
+            stack[-1].append(Token(_BINARY_OPERATORS[char], char, i))
         elif char.isalpha():
-            tokens.append(Token(TokenType.ATOM, char, i))
+            stack[-1].append(Token(TokenType.ATOM, char, i))
         elif char == '(':
-            stack.append((tokens, i))
-            tokens = []
+            stack.append([])
         elif char == ')':
-            previous_tokens, position = stack.pop()
-            subexpression = Subexpression(tokens, position)
-            tokens = previous_tokens
-            tokens.append(subexpression)
+            if len(stack) == 1:
+                raise SyntaxError(f"Unmatched parentheses at point {i}")
+            inner = stack.pop()
+            subexpression = Subexpression(inner, i)
+            stack[-1].append(subexpression)
 
-    return tokens
+    if len(stack) != 1:
+        raise SyntaxError("Unclosed parentheses in expression")
+
+    return stack[0]
