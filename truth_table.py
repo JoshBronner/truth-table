@@ -2,7 +2,7 @@ from itertools import product
 from typing import List
 from expressions import *
 from tokens import *
-from expression_parse import ExpressionParser
+from expression_parser import ExpressionParser
 from lexer import lexer
 from atom_extraction import extract_atoms
 
@@ -14,7 +14,7 @@ class TruthTable:
         self._combinations = list(product([True, False], repeat=len(self._atoms)))
         self._assignments = [dict(zip(self._atoms, combination)) for combination in self._combinations]
         
-        self.truth_table = self.generate_truth_table(self._expression)
+        self.truth_table = self.generate_truth_table()
 
 
     def generate_truth_table(self) -> List[dict[str:bool]]:
@@ -26,6 +26,3 @@ class TruthTable:
             table.append(row)
 
         return table
-    
-
-print(TruthTable("AvB").truth_table)
