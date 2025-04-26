@@ -1,3 +1,5 @@
+# Purpose of file: Generate truth table
+
 from itertools import product
 from typing import List
 from expressions import *

@@ -1,3 +1,5 @@
+# Purpose of file: Token and Subexpression classes.
+
 from enum import Enum, auto
 from typing import List
 

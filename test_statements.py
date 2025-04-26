@@ -1,3 +1,5 @@
+# Purpose of file: Testing. Currently broken due to dict order inconsistency.
+
 from truth_table import TruthTable
 
 # Test "A"

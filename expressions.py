@@ -1,3 +1,6 @@
+# Purpose of file: Contains classes for each expression type.
+
+
 # Abstract base class
 class Expression:
     def evaluate(self, assignment) -> bool:

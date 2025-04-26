@@ -1,3 +1,4 @@
+# Purpose of file: General utils. Currently just atom extraction, hence file name.
 
 from typing import List
 from expressions import *
