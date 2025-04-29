@@ -40,7 +40,7 @@ class Not(Expression):
     def __str__(self):
         if isinstance(self.right, Atom):
             return f'¬{self.right}'
-        return f'¬{self.right}'
+        return f'¬({self.right})'
     def evaluate(self, assignment) -> bool:
         return not self.right.evaluate(assignment)
     
