@@ -1,7 +1,7 @@
 # Purpose of file: Get tokens from string input
 
 from typing import List
-from tokens import *
+from .tokens import *
 
     
 _UNARY_OPERATORS = {

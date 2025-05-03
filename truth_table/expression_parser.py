@@ -1,7 +1,7 @@
 # Purpose of file: Take a tokenized list and create an expression for it.
 
-from expressions import *
-from tokens import *
+from .expressions import *
+from .tokens import *
 from typing import List
 
 class ExpressionParser:

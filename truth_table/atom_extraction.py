@@ -1,7 +1,7 @@
 # Purpose of file: General utils. Currently just atom extraction, hence file name.
 
 from typing import List
-from expressions import *
+from .expressions import *
 
 # Takes in expression, provides sorted set of atoms
 def extract_atoms(expression:Expression) -> List[dict]:

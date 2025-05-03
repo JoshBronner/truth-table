@@ -2,11 +2,11 @@
 
 from itertools import product
 from typing import List
-from expressions import *
-from tokens import *
-from expression_parser import ExpressionParser
-from lexer import lexer
-from atom_extraction import extract_atoms
+from .expressions import *
+from .tokens import *
+from .expression_parser import ExpressionParser
+from .lexer import lexer
+from .atom_extraction import extract_atoms
 
 class TruthTable:
     def __init__(self, input_statement:str) -> None:
