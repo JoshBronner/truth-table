@@ -1,7 +1,12 @@
 # Purpose of file: Project main file.
 
+import streamlit as st
 from truth_table import TruthTable
 
 if __name__ == "__main__":
-    table = TruthTable("(¬(A^B)) ⇒ ¬A^¬B").generate_truth_table()
-    for row in table: print(row)
+   truth_table = TruthTable("AvB")
+
+   formula = st.text_input("Logical Expression:")
+   
+   if formula:
+      st.table(TruthTable(formula).generate_truth_table())
