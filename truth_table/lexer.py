@@ -18,9 +18,17 @@ _BINARY_OPERATORS = {
 # Takes string, returns list of Tokens. It lexers.
 def lexer(statement:str) -> List[Token|Subexpression]:
     stack: List[List[Token|Subexpression]] = [[]]
+    cont = False
 
     for i, char in enumerate(statement):
-        if char in _UNARY_OPERATORS:
+        if cont:
+            cont = False
+            continue
+        elif char == '-' or char == '–':
+            if i+1 < len(statement) and statement[i+1] == '>':
+                cont = True
+                stack[-1].append(Token(TokenType.IMPLIES, '⇒', i))
+        elif char in _UNARY_OPERATORS:
             stack[-1].append(Token(_UNARY_OPERATORS[char], char, i))
         elif char in _BINARY_OPERATORS:
             stack[-1].append(Token(_BINARY_OPERATORS[char], char, i))
