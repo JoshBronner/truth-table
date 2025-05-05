@@ -12,8 +12,13 @@ if __name__ == "__main__":
 
    truth_table = TruthTable("AvB")
 
-   formula = st.text_input("Logical Expression:", help="Type in a logical expression here to create a truth table")
+   formula = st.text_input("Logical Expression:", 
+                           help="Type in a logical expression here to create a truth table",
+                           max_chars=50)
 
    
    if formula:
-      st.table(TruthTable(formula).generate_truth_table())
+      try:
+         st.table(TruthTable(formula).generate_truth_table())
+      except Exception as E:
+         st.text(f"Error: {E}\nMore error support coming soon, for now just check your parenthesis, atoms, and operators")
