@@ -7,11 +7,11 @@ class TokenType(Enum):
     ATOM = auto()
     SUBEXPRESSION = auto()
 
-    NOT = auto()
-    BICONDITIONAL = auto()
-    IMPLIES = auto()
-    CONJUNCTION = auto()
-    DISJUNCTION = auto()
+    NOT = '¬'
+    BICONDITIONAL = '⇔'
+    IMPLIES = '⇒'
+    CONJUNCTION = '∧'
+    DISJUNCTION = '∨'
 
 class Token:
     def __init__(self, type:TokenType, value:str, position:int):
